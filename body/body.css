@@ -1,0 +1,256 @@
+/* ds-pet body — transparent page. The stage is always pinned to the window
+   bottom, so growing the window upward for a bubble leaves the character in
+   the same place on screen. */
+
+:root {
+  --stage-height: calc(100vw * 9 / 16);
+  --bubble-gap: 8px;
+  --bubble-max-height: 320px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--stage-height);
+  z-index: 1;
+}
+
+video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  background: transparent;
+  /* clips cross-fade: a pose that does not quite meet, or a
+     first frame not painted yet, is covered by the fade instead of showing as a flash */
+  transition: opacity 0.18s ease;
+}
+
+video.is-front {
+  opacity: 1;
+}
+
+#hit {
+  position: absolute;
+  bottom: 0;
+  z-index: 2;
+  cursor: grab;
+  touch-action: none;
+  background: transparent;
+}
+
+#hit.dragging {
+  cursor: grabbing;
+}
+
+/* the talk button: appears while the pointer is over her, opens her input window (main.cjs openTalk).
+   It sits inside the hit box, because only that area takes the pointer. */
+.talk {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 50%;
+  background: #ffffff;
+  color: #33383f;
+  font: 600 13px/1 "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.85);
+  transition: opacity 120ms ease-out, transform 120ms ease-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+#hit.near .talk {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.talk:hover {
+  background: #f4f5f6;
+}
+
+#bubble,
+.bubble {
+  position: absolute;
+  left: 50%;
+  /* just above her head (body.js sets --bubble-bottom from the figure's hit box) */
+  bottom: var(--bubble-bottom, calc(var(--stage-height) + var(--bubble-gap)));
+  z-index: 3;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 48px;
+  max-width: min(260px, calc(100vw - 16px));
+  max-height: calc(14px * 1.5 * 6 + 18px); /* six lines */
+  padding: 9px 13px;
+  /* a plain bubble: one flat colour and one hairline, no gradient (user, 10-29) */
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  background: #ffffff;
+  color: #22262b;
+  font-family: "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%) scale(0.92);
+  transform-origin: 50% 100%;
+  transition: opacity 140ms ease-in, transform 140ms ease-in;
+}
+
+#bubble.is-on,
+.bubble.is-on {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  transition: opacity 160ms ease-out, transform 160ms ease-out;
+}
+
+/* a long text scrolls itself as it types; its top edge fades */
+#bubble.is-long,
+.bubble.is-long {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 14px);
+}
+
+/* the tail, pointing down at her head */
+#bubble::after,
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 0 0 3px 0;
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  transform: rotate(45deg);
+}
+/* Earlier reply beats and input echoes share the head-centred stack. */
+.bubble-trail,
+.bubble-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 16px));
+  padding: 7px 11px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: #fbfbfc;
+  color: #3a3f45;
+  font-family: "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  transition: opacity 400ms ease-out;
+}
+
+.bubble-line {
+  background: #ffffff;
+  color: #22262b;
+  border-color: rgba(0, 0, 0, 0.14);
+}
+
+.bubble-trail.is-fading,
+.bubble-line.is-fading {
+  opacity: 0;
+}
+
+/* Thinking is a single short marker, so it must not inherit the reply
+   bubble's six-line height budget. */
+.bubble-thinking {
+  width: max-content;
+  min-width: 0;
+  max-height: none;
+  /* Thinking is part of the stacked line list; its top is assigned by
+     body.js, so the primary bubble's bottom anchor must not stretch it. */
+  bottom: auto;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  line-height: 1;
+}
+
+.bubble-thinking.is-on { transform: translateX(-50%); }
+
+.bubble-thinking .b-think {
+  display: block;
+  min-width: 2.8em;
+  height: 1em;
+  line-height: 1;
+}
+/* your words, then the thinking mark, in her own bubble */
+#bubble .b-echo,
+#bubble .b-think,
+.bubble .b-echo,
+.bubble .b-think {
+  margin: 0;
+  font: inherit;
+}
+
+.ask-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  pointer-events: auto;
+}
+
+.ask-option {
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 999px;
+  padding: 4px 9px;
+  background: #f5f6f8;
+  color: #22262b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ask-option:disabled { opacity: .6; cursor: default; }
+
+#bubble .b-echo,
+.bubble .b-echo {
+  color: #22262b;
+}
+
+#bubble .b-think,
+.bubble .b-think {
+  display: inline-block;
+  min-width: 2.8em;
+  text-align: center;
+  color: var(--dsw-alias-label-tertiary, #8a8f96);
+  letter-spacing: 2px;
+}

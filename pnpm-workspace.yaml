@@ -1,0 +1,15 @@
+packages:
+  - packages/*
+
+allowBuilds:
+  '@parcel/watcher': false
+  '@tailwindcss/oxide': true
+  electron: true
+  esbuild: true
+  koffi: true
+  # the brain never opens a terminal, and protobufjs only needs its postinstall for Bundler users
+  node-pty: false
+  protobufjs: false
+
+minimumReleaseAgeExclude:
+  - electron@44.4.4

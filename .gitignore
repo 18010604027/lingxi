@@ -1,0 +1,27 @@
+node_modules/
+.conda/
+build/
+dist/
+scratch/
+*.log
+.env
+.env.*
+!.env.example
+*.jsonl
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+coverage/
+promo/assets/bgm.mp3
+# DSH development tasks (tools/dsh-task.mts): its session store
+.dsh-dev/
+# the body's scratch runs and a reference copy kept for reading only, not shipped
+body/.tmp/
+body/ref/
+# a figure pack is the person's own: it can live here (packs/<name>/) and is never committed.
+# Only the format files below stay tracked; everything else under packs/ is local.
+packs/*
+!packs/README.md
+!packs/figure.schema.json
+!packs/check.ts

@@ -1,0 +1,8 @@
+{
+  "name": "@ds/voice-out",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "test": "vitest run --config vitest.config.ts", "typecheck": "tsc -p tsconfig.json" }
+}

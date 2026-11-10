@@ -1,0 +1,13 @@
+{
+  "name": "ds-pet-body",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dumb Electron body for a desktop pet; the brain lives in another process",
+  "main": "main.cjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

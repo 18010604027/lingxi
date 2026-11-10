@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self' file:; style-src 'self' 'unsafe-inline' file:; media-src file: blob:; img-src 'self' file: data:; connect-src 'none'"
+    />
+    <title>ds-pet body</title>
+    <link rel="stylesheet" href="body.css" />
+  </head>
+  <body>
+    <div id="bubble" role="status" aria-live="polite"></div>
+    <div id="stage">
+      <video id="video-a" muted playsinline preload="auto"></video>
+      <video id="video-b" muted playsinline preload="auto"></video>
+      <div id="hit" aria-label="pet">
+        <button id="talk" class="talk" type="button" aria-label="跟她说话" title="跟她说话">说</button>
+      </div>
+    </div>
+    <!-- the movement maths is the figure pack's motion.cjs, loaded by the main process -->
+    <script src="clips.cjs"></script>
+    <script src="body.js"></script>
+  </body>
+</html>

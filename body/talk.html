@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'"
+    />
+    <title>跟她说一句</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+        font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei UI", sans-serif;
+      }
+      #bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-sizing: border-box;
+        width: calc(100% - 2px);
+        height: calc(100% - 2px);
+        margin: 1px;
+        padding: 0 12px;
+        border: 1px solid #e2e4e8;
+        border-radius: 10px;
+        background: #ffffff;
+      }
+      #bar:focus-within {
+        border-color: #9aa6b2;
+      }
+      #text {
+        flex: 1;
+        min-width: 0;
+        height: 32px;
+        border: none;
+        outline: none;
+        background: transparent;
+        color: #1a1a1a;
+        font: inherit;
+        font-size: 14px;
+      }
+      #text::placeholder {
+        color: #9aa0a8;
+      }
+      #send {
+        flex: none;
+        height: 28px;
+        padding: 0 12px;
+        border: none;
+        border-radius: 7px;
+        background: #eef0f3;
+        color: #33373d;
+        font: 500 12px/1 inherit;
+        cursor: pointer;
+      }
+      #send:hover {
+        background: #e5e8ec;
+      }
+      #send:active {
+        background: #dcdfe4;
+      }
+      #send:focus-visible {
+        outline: 2px solid #b9c0c8;
+        outline-offset: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="bar" autocomplete="off">
+      <input id="text" type="text" maxlength="2000" placeholder="跟她说一句，回车发送" />
+      <button id="send" type="submit">发送</button>
+    </form>
+    <script src="talk.js"></script>
+  </body>
+</html>

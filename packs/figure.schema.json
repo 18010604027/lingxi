@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "lingxi figure pack",
+  "description": "The figure table a pack must provide as figure.json. The same checks run at startup; see packs/README.md.",
+  "type": "object",
+  "required": ["name", "refWidth", "bodyWidth", "nativeFacing", "idle", "held", "noMirror", "moves", "words"],
+  "properties": {
+    "name": { "type": "string", "minLength": 1 },
+    "source": { "type": "string", "description": "Free text about where the pack came from; the code never reads it." },
+    "refWidth": { "type": "number", "exclusiveMinimum": 0 },
+    "bodyWidth": { "type": "number", "exclusiveMinimum": 0 },
+    "nativeFacing": { "enum": ["left", "right"] },
+    "canvas": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": { "width": { "type": "number", "exclusiveMinimum": 0 }, "height": { "type": "number", "exclusiveMinimum": 0 } },
+      "additionalProperties": true
+    },
+    "hit": {
+      "type": "object",
+      "properties": {
+        "box": {
+          "type": "object",
+          "required": ["x0", "y0", "x1", "y1"],
+          "properties": { "x0": { "type": "number" }, "y0": { "type": "number" }, "x1": { "type": "number" }, "y1": { "type": "number" } },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "idle": { "$ref": "#/definitions/clipList" },
+    "held": { "$ref": "#/definitions/clipList" },
+    "noMirror": { "$ref": "#/definitions/clipList" },
+    "moves": {
+      "type": "object",
+      "required": ["walk", "run"],
+      "properties": {
+        "walk": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/move" } },
+        "run": { "type": "array", "items": { "$ref": "#/definitions/move" } },
+        "teleport": { "type": "boolean" },
+        "cross": { "$ref": "#/definitions/move" }
+      },
+      "additionalProperties": true
+    },
+    "words": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/definitions/clipList" }
+    },
+    "vocab": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "zh", "about"],
+        "properties": {
+          "kind": { "enum": ["motion", "expression"] },
+          "zh": { "type": "array", "items": { "type": "string" } },
+          "en": { "type": "array", "items": { "type": "string" } },
+          "about": { "type": "string" },
+          "when": { "type": "string" },
+          "whenEn": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "clipList": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "move": {
+      "type": "object",
+      "required": ["clip", "leadSec", "tailSec", "minDist", "maxDist"],
+      "properties": {
+        "clip": { "type": "string", "minLength": 1, "description": "A bare file name inside the pack's clips folder." },
+        "leadSec": { "type": "number", "minimum": 0 },
+        "tailSec": { "type": "number", "minimum": 0 },
+        "minDist": { "type": "number", "minimum": 0 },
+        "maxDist": { "type": "number", "minimum": 0 },
+        "durationSec": { "type": "number", "minimum": 0 },
+        "endSec": { "type": "number", "minimum": 0 },
+        "segment": {
+          "type": "object",
+          "required": ["startSec", "endSec"],
+          "properties": { "startSec": { "type": "number", "minimum": 0 }, "endSec": { "type": "number", "minimum": 0 } },
+          "additionalProperties": true
+        },
+        "default": { "type": "boolean" },
+        "id": { "type": "string" },
+        "zh": { "type": "array", "items": { "type": "string" } },
+        "en": { "type": "array", "items": { "type": "string" } },
+        "about": { "type": "string" },
+        "when": { "type": "string" },
+        "mood": { "type": "array", "items": { "type": "string" }, "description": "Free mood tags (calm, happy, shy, ...) the selectors match on." }
+      },
+      "additionalProperties": true
+    }
+  }
+}
